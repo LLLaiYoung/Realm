@@ -1,0 +1,12 @@
+PODS:
+  - Realm (0.102.0):
+    - Realm/Headers (= 0.102.0)
+  - Realm/Headers (0.102.0)
+
+DEPENDENCIES:
+  - Realm
+
+SPEC CHECKSUMS:
+  Realm: 5d219f9037e3ec2019c599b8227bfc95433cb10e
+
+COCOAPODS: 0.39.0
