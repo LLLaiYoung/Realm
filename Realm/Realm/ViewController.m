@@ -54,7 +54,6 @@ UITableViewDelegate
         hiSchool.height = @170;
         hiSchool.avatar = UIImagePNGRepresentation([UIImage imageNamed:@"IMG_0852"]);
         BOOL error = [[DataBaseManager defaultManager] insertDefaultDBWithHiSchool:hiSchool];
-//        [[DateBaseManager defaultManager] insertCustomDBWithDBName:kRealmCustomDBName OfHiSchool:hiSchool];
         NSLog(@"%i",error);
         [self.tableView reloadData];
 }
@@ -94,39 +93,30 @@ UITableViewDelegate
 //    for (HiSchool *hiSchool in results) {
 //        NSLog(@"%@",hiSchool);
 //    }
-    RLMResults *results = [[DataBaseManager defaultManager] sortDefaultDBWithProperty:kRealmPrimaryKey ascending:NO];
-    for (HiSchool *hiSchool in results) {
-        NSLog(@"%@",hiSchool);
-    }
+//    RLMResults *results = [[DataBaseManager defaultManager] sortDefaultDBWithProperty:kRealmPrimaryKey ascending:NO];
+//    for (HiSchool *hiSchool in results) {
+//        NSLog(@"%@",hiSchool);
+//    }
+    NSLog(@"%@",[[DataBaseManager defaultManager] queryDefaultDBWithHiSchoolNumberOfIndex:0]);
     [self.tableView reloadData];
 }
 #pragma mark - UITableViewDataSource
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
-    return 2;
+    return 1;
 }
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    if (section==0)  return [[DataBaseManager defaultManager] numberOfDefaultDBCount];
-    return [[DataBaseManager defaultManager] numberOfCustomDBCountWithDBName:kRealmCustomDBName];
+    return [[DataBaseManager defaultManager] numberOfDefaultDBCount];
 }
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    RealmCell *cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier];
-    if (indexPath.section==0) {
+    RealmCell *cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier forIndexPath:indexPath];
         HiSchool *hiSchool = [[DataBaseManager defaultManager] queryDefaultDBWithHiSchoolNumberOfIndex:indexPath.row];
         cell.hiSchool = hiSchool;
         return cell;
-    }
-    HiSchool *hischool = [[DataBaseManager defaultManager] queryCustomDBWithDBName:kRealmCustomDBName OfIndex:indexPath.row];
-    cell.hiSchool = hischool;
-    return cell;
 }
 - (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath {
     if (indexPath.section==0) {
         if (editingStyle == UITableViewCellEditingStyleDelete) {
             [[DataBaseManager defaultManager] deleteDefaultDBWithHiSchool:[[DataBaseManager defaultManager] queryDefaultDBAllObjects][indexPath.row]];
-        }
-    } else {
-        if (editingStyle == UITableViewCellEditingStyleDelete) {
-            [[DataBaseManager defaultManager] deleteCustomDBWithDBName:kRealmCustomDBName OfHiSchool:[[DataBaseManager defaultManager] queryCustomDBAllObjectsWithDBName:kRealmCustomDBName][indexPath.row]];
         }
     }
     [self.tableView reloadData];

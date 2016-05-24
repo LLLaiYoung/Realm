@@ -37,24 +37,5 @@ static NSString *const kRealmCustomDBName = @"HiSchool";
 - (RLMResults *)queryDefaultDBWithContains:(NSString *)contain;//YES
 /** 排序查询 */
 - (RLMResults *)sortDefaultDBWithProperty:(id)property ascending:(BOOL)yesOrNo;//YES
-#pragma mark - CustomDataBase
-/** 返回总个数 ->自定义数据库 */
-- (NSUInteger)numberOfCustomDBCountWithDBName:(NSString *)dbName;
-/** 插入一条数据 ->自定义数据库 */
-- (void)insertCustomDBWithDBName:(NSString *)dbName OfHiSchool:(HiSchool *)hiSchool;
-/** 删除一条数据 ->自定义数据库 */
-- (void)deleteCustomDBWithDBName:(NSString *)dbName OfHiSchool:(HiSchool *)hiSchool;
-/** 根据index删除一条数据 ->自定义数据库 */
-- (void)deleteCustomDBWithDBname:(NSString *)dbName hiSchoolOfIndex:(NSInteger)index;
-/** 删除数据库所有对象 ->自定义数据库 */
-- (void)deleteCustomDBAllObajectsWithDBName:(NSString *)dbName;
-/** 更新一条数据 ->自定义数据库*/
-- (void)updateCustomDBWithDBName:(NSString *)dbName OfHiSchool:(HiSchool *)hiSchool;
-/** 更新多条数据 ->自定义数据库 */
-- (void)updateCustomDBWithDBName:(NSString *)dbName OfObjects:(NSArray<HiSchool *> *)hiSchools;
-/** 根据数据库名称,index返回单个对象 ->自定义数据库 */
-- (HiSchool *)queryCustomDBWithDBName:(NSString *)dbName OfIndex:(NSInteger)index;
-/** 获取数据库所有对象 ->自定义*/
-- (RLMResults *)queryCustomDBAllObjectsWithDBName:(NSString *)dbName;
-/** 条件查询 包含 contains objectsInRealm:realm where:@"name contains 'x'" */
+
 @end

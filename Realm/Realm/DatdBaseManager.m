@@ -24,18 +24,6 @@
 }
 
 #pragma mark - Private methods
-/**
- *  获取数据库路径
- *
- *  @param dbName 数据库名称
- *
- *  @return 自定义数据库路径
- */
-- (NSURL *)dataBasePath:(NSString *)dbName {
-    NSString *docPath = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) lastObject];
-    NSString *dbPath = [docPath stringByAppendingPathComponent:[NSString stringWithFormat:@"%@.realm",dbName]];
-    return [NSURL URLWithString:dbPath];
-}
 // * 生成64位随机字符串作为主键 */
 -(NSString *)ret64bitString {
     char data[64];
@@ -118,7 +106,7 @@
 }
 
 - (HiSchool *)queryDefaultDBWithHiSchoolNumberOfIndex:(NSInteger)index {
-    if (index<0 || index>[self numberOfDefaultDBCount]) return nil;
+    if (index<0 || index>[self numberOfDefaultDBCount] ||[self numberOfDefaultDBCount]==0) return nil;
     HiSchool *hiSchool = [self queryDefaultDBAllObjects][index];
     return hiSchool;
 }
@@ -135,94 +123,6 @@
 - (RLMResults *)sortDefaultDBWithProperty:(id)property ascending:(BOOL)yesOrNo {
     return [[HiSchool allObjects] sortedResultsUsingProperty:property ascending:yesOrNo];
 }
-#pragma mark - CustomDataBase
-- (NSUInteger)numberOfCustomDBCountWithDBName:(NSString *)dbName {
-    if (dbName.length==0) return 0;
-    RLMRealm *realm = [RLMRealm realmWithURL:[self dataBasePath:kRealmCustomDBName]];
-    return [HiSchool allObjectsInRealm:realm].count;
-}
 
-- (void)insertCustomDBWithDBName:(NSString *)dbName OfHiSchool:(HiSchool *)hiSchool {
-    if (hiSchool.title.length==0 || dbName.length==0) return;
-//    RLMRealm *realm = [RLMRealm realmWithURL:[self dataBasePath:kRealmCustomDBName]];
-    RLMRealmConfiguration *config = [RLMRealmConfiguration defaultConfiguration];
-    config.fileURL = [self dataBasePath:kRealmCustomDBName];
-    config.readOnly = NO;
-    RLMRealm *realm = [RLMRealm realmWithConfiguration:config error:nil];
-    NSLog(@"path = %@",realm.configuration.fileURL);
-    WEAKSELF
-    [realm transactionWithBlock:^{
-        NSDictionary *dic = @{
-                              kRealmPrimaryKey:[weakSelf ret64bitString],
-                              kRealmAvatarData:hiSchool.avatar,
-                              kRealmTitle:hiSchool.title,
-                              kRealmSubtitle:hiSchool.subTitle,
-                              kRealmAge:hiSchool.age,
-                              kRealmDate:hiSchool.date,
-                              kRealmMale:hiSchool.isMale,
-                              kRealmWeight:hiSchool.weight,
-                              kRealmHeight:hiSchool.height
-                              };
-        [HiSchool createInRealm:realm withValue:dic];
-    }];
-}
-
-
-- (void)deleteCustomDBWithDBName:(NSString *)dbName OfHiSchool:(HiSchool *)hiSchool {
-    if (dbName.length==0 || hiSchool.title.length==0) return;
-    RLMRealm *realm = [RLMRealm realmWithURL:[self dataBasePath:kRealmCustomDBName]];
-    [realm beginWriteTransaction];
-    [realm deleteObject:hiSchool];
-    [realm commitWriteTransaction];
-}
-
-- (void)deleteCustomDBWithDBname:(NSString *)dbName hiSchoolOfIndex:(NSInteger)index {
-    if (dbName.length==0 || index<0) return;
-    RLMRealm *realm = [RLMRealm realmWithURL:[self dataBasePath:kRealmCustomDBName]];
-    HiSchool *hiSchool = [self queryCustomDBWithDBName:dbName OfIndex:index];
-    [realm transactionWithBlock:^{
-        [realm deleteObject:hiSchool];
-    }];
-}
-
-- (void)deleteCustomDBAllObajectsWithDBName:(NSString *)dbName {
-    if (dbName.length==0) return;
-    RLMRealm *realm = [RLMRealm realmWithURL:[self dataBasePath:dbName]];
-    [realm beginWriteTransaction];
-    [realm deleteAllObjects];
-    [realm commitWriteTransaction];
-}
-
-
-- (void)updateCustomDBWithDBName:(NSString *)dbName OfHiSchool:(HiSchool *)hiSchool {
-    if (dbName.length==0 || hiSchool.title.length==0) return;
-    RLMRealm *realm = [RLMRealm realmWithURL:[self dataBasePath:dbName]];
-    [realm transactionWithBlock:^{
-        [realm addObject:hiSchool];
-    }];
-}
-
-- (void)updateCustomDBWithDBName:(NSString *)dbName OfObjects:(NSArray<HiSchool *> *)hiSchools {
-    if (dbName.length==0 || hiSchools.count==0) return;
-    RLMRealm *realm = [RLMRealm realmWithURL:[NSURL URLWithString:dbName]];
-    [realm beginWriteTransaction];
-    [realm addOrUpdateObjectsFromArray:hiSchools];
-    [realm commitWriteTransaction];
-}
-
-- (HiSchool *)queryCustomDBWithDBName:(NSString *)dbName OfIndex:(NSInteger)index {
-    if (dbName.length==0) return nil;
-    if (index<0 || index>[self numberOfCustomDBCountWithDBName:dbName]) return nil;
-    HiSchool *hiSchool = [self queryCustomDBAllObjectsWithDBName:dbName][index];
-    return hiSchool;
-}
-
-
-#warning 判断数据库是否存在 NSFileManager
-- (RLMResults *)queryCustomDBAllObjectsWithDBName:(NSString *)dbName {
-    if (dbName.length==0) return nil;
-    RLMRealm *realm = [RLMRealm realmWithURL:[NSURL URLWithString:dbName]];
-    return [HiSchool allObjectsInRealm:realm];
-}
 
 @end
